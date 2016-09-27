@@ -59,6 +59,7 @@ class FileLoader
         end
       end
       if(!lines.empty?)
+        @log.info("Flushing Batch of #{counter} from #{file}")
         insert_record file, lines
       end
       @log.info("Finished #{file}")
