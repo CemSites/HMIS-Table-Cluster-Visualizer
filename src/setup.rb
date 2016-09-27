@@ -1,6 +1,8 @@
 require 'sequel'
 DB = Sequel.connect('postgres://localhost/straymonds_data')
 
+DB.run "CREATE EXTENSION IF NOT EXIST pg_trgm;"
+
 DB.drop_table(:links)
 
 DB.create_table(:links) do
