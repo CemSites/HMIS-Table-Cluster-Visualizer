@@ -26,7 +26,20 @@ class FileLoader
   end
 
   def insert_record(filename, data_collection)
-    @model.dataset.import [:filename, :data], data_collection
+    @model.dataset.import [:filename, :data], data_collection, commit_every: @limit
+  rescue => e
+    @log.warn("#{filename} generated error #{e.message} falling back to one at a time")
+    insert_one_at_a_time(filename, data_collection)
+  end
+
+  def insert_one_at_a_time(filename, data_collection)
+    data_collection.each do |data|
+      begin
+        @model.dataset.insert [:filename, :data], data
+      rescue => e
+        @log.warn("#{filename} generated error #{e.message} with data #{data.last} moving on")
+      end
+    end
   end
 
   def load_files
