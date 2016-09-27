@@ -57,9 +57,9 @@ class FileLoader
           lines = []
           counter = 0
         end
-        if(!lines.empty?)
-          insert_record file, lines
-        end
+      end
+      if(!lines.empty?)
+        insert_record file, lines
       end
       @log.info("Finished #{file}")
     end
