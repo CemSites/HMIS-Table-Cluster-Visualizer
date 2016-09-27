@@ -23,5 +23,5 @@ DB.create_table(:records) do
   String :data, text: true
 
   index :filename
-  index :data
 end
+DB.run "CREATE INDEX data_trgm_idx ON records USING gist (data gist_trgm_ops);"

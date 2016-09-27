@@ -1,5 +1,4 @@
 require 'logger'
-require 'sequel'
 
 class FileLoader
   def self.perform(folder = 'data')
