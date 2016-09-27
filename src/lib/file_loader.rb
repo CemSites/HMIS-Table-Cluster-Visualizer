@@ -7,7 +7,7 @@ class FileLoader
   end
 
   def initialize(folder, model = Record)
-    @log = Logger.new(STDOUT)
+    @log = Logger.new("#{Time.now.to_i}_import_log.txt")
     @log.level = Logger::INFO
     @folder = folder
     @model = model
