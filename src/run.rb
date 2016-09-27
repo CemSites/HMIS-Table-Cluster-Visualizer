@@ -1,9 +1,9 @@
-require 'data_mapper'
+require 'sequel'
 require_relative './lib/file_loader.rb'
-DataMapper.setup(:default, 'postgres://localhost/straymonds_data')
+Sequel.connect('postgres://localhost/straymonds_data')
+Sequel::Model.strict_param_setting = false
 
 require_relative './models/record.rb'
 require_relative './models/link.rb'
 
-DataMapper.finalize
-DataMapper.auto_migrate!
+FileLoader.perform
