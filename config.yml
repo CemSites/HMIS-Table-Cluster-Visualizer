@@ -1,0 +1,2 @@
+config:
+  database_string: postgres://localhost/straymonds_data2

@@ -22,26 +22,13 @@ class LinkBuilder
   end
 
   def find_links_for(ngram)
-    record_count = 0
-    record_types.each do |type|
-      record_ids = []
-      Record.dataset.where(filename: type).order(:id).paged_each(rows_per_fetch: 5000) do |record|
-        record_ids << record.id
-        record_count+=1
-        if(record_ids.count >= 1000)
-          links = Record.dataset.where(id: record_ids).grep(:data, "%#{ngram}%").map{ |r| [r[:id], ngram] }
-          @log.debug links.inspect
-          @log.info record_count
-          Link.dataset.import [:source_link_id, :match], links, commit_every: 1000
-          record_ids = []
-        end
-      end
-      if(record_ids.count > 0)
-        links = Record.dataset.where(id: record_ids).grep(:filename, "%#{ngram}%").map{ |r| [r[:id], ngram] }
-        @log.debug links.inspect
-        @log.info record_count
-        Link.dataset.import [:source_link_id, :match], links
-      end
-    end
+    @log.info "Starting #{ngram}"
+    links = Record.dataset
+      .grep(:data, "%#{ngram}%")
+      .map{ |r| [r[:id], ngram] }
+    @log.info "Committing record links for query #{ngram}"
+    inserted = Link.dataset.import [:source_link_id, :match], links, commit_every: 10_000, return: :primary_key
+    @log.info "Finished with #{ngram}"
+    return inserted
   end
 end

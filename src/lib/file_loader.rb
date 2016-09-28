@@ -11,7 +11,6 @@ class FileLoader
     @folder = folder
     @model = model
     @limit = 50000
-    @DB = Sequel.connect('postgres://localhost/straymonds_data')
   end
 
   def files_to_process
