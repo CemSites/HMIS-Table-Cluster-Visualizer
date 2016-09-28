@@ -1,2 +1,2 @@
-class Link < Sequel::Model(:queries)
+class Query < Sequel::Model(:queries)
 end

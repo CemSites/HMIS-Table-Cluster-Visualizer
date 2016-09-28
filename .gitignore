@@ -2,3 +2,4 @@ data
 *.zip
 *_import_log.txt
 *_link_log.txt
+*_query_log.txt
