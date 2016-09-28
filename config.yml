@@ -1,2 +1,5 @@
 config:
   database_string: postgres://localhost/straymonds_data2
+  #database_string: mysql://root:root@localhost/st_ray
+  database_adapter: postgres
+  #database_adapter: mysql
