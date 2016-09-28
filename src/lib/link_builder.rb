@@ -8,6 +8,8 @@ class LinkBuilder
   end
 
   def initialize
+    @log = Logger.new("#{Time.now.to_i}_link_log.txt")
+    @log.level = Logger::INFO
     @batch_size = 10_000
   end
 
@@ -20,19 +22,25 @@ class LinkBuilder
   end
 
   def find_links_for(ngram)
+    record_count = 0
     record_types.each do |type|
-      counter = 0
       record_ids = []
-      Record.dataset.where(filename: type).order(:id).paged_each do |record|
-        #puts record
+      Record.dataset.where(filename: type).order(:id).paged_each(rows_per_fetch: 5000) do |record|
         record_ids << record.id
-        counter+=1
-        if(counter >= 500)
-          puts Record.dataset.where(id: record_ids).grep(:filename, "%#{ngram}%").sql
+        record_count+=1
+        if(record_ids.count >= 1000)
+          links = Record.dataset.where(id: record_ids).grep(:data, "%#{ngram}%").map{ |r| [r[:id], ngram] }
+          @log.debug links.inspect
+          @log.info record_count
+          Link.dataset.import [:source_link_id, :match], links, commit_every: 1000
+          record_ids = []
         end
       end
-      if(counter > 0)
-        puts Record.dataset.where(id: record_ids).grep(:filename, "%#{ngram}%").sql
+      if(record_ids.count > 0)
+        links = Record.dataset.where(id: record_ids).grep(:filename, "%#{ngram}%").map{ |r| [r[:id], ngram] }
+        @log.debug links.inspect
+        @log.info record_count
+        Link.dataset.import [:source_link_id, :match], links
       end
     end
   end
